@@ -4,7 +4,10 @@ require('dotenv').config();
 let pool;
 
 if (process.env.DB_URL) {
-    pool = mysql.createPool(process.env.DB_URL);
+    pool = mysql.createPool({
+        uri: process.env.DB_URL,
+        ssl: { rejectUnauthorized: false }
+    });
 } else {
     pool = mysql.createPool({
         host: process.env.DB_HOST,
