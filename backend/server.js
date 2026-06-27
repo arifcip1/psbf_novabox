@@ -75,11 +75,20 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_key_12345';
 
-// --- Multer Setup ---
+const os = require('os');
+const fs = require('fs');
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        // Netlify functions are read-only except for /tmp
-        cb(null, process.env.NETLIFY ? '/tmp' : 'uploads/');
+        // Detect Netlify (AWS Lambda) or fallback to uploads/
+        const isServerless = !!process.env.AWS_LAMBDA_FUNCTION_NAME;
+        const uploadDir = isServerless ? os.tmpdir() : 'uploads/';
+        
+        if (!isServerless && !fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        
+        cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
