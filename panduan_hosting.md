@@ -64,7 +64,7 @@ Buka tab peramban (_browser_) baru dan segera daftar menggunakan **Akun GitHub**
    * **Publish directory:** `frontend/dist`
 5. Buka tab **Environment variables** (Show advanced) dan tambahkan:
    * **Key:** `VITE_API_URL`
-   * **Value:** *(Paste Link API Backend dari Langkah 4.7)* (Contoh: `https://acak-backend.netlify.app`).
+   * **Value:** *(Paste Link API Backend dari Langkah 4.7)* + `/api` (Contoh: `https://acak-backend.netlify.app/api`).
 6. Klik **Deploy site**.
 7. Netlify akan membangun frontend Anda dan memberikan URL publik final.
 

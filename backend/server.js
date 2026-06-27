@@ -12,6 +12,63 @@ const pool = require('./db'); // MySQL Connection Pool
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// --- DB INITIALIZATION ROUTE ---
+app.get('/api/init-db', async (req, res) => {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS tb_users (
+                id_user VARCHAR(36) PRIMARY KEY,
+                full_name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) NOT NULL UNIQUE,
+                password VARCHAR(255) NOT NULL,
+                role ENUM('Super Admin', 'Admin', 'Manajer', 'Staff Gudang') DEFAULT 'Staff Gudang',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS tb_products (
+                id_produk VARCHAR(36) PRIMARY KEY,
+                sku_code VARCHAR(50) NOT NULL UNIQUE,
+                nama_produk VARCHAR(150) NOT NULL,
+                kategori VARCHAR(50),
+                lokasi VARCHAR(100) DEFAULT 'Gudang Utama',
+                stok_aktual INT DEFAULT 0,
+                batas_minimum INT DEFAULT 0,
+                harga_beli DECIMAL(15,2) DEFAULT 0,
+                harga_jual DECIMAL(15,2) DEFAULT 0,
+                foto_produk VARCHAR(255),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS tb_stock_logs (
+                id_log INT AUTO_INCREMENT PRIMARY KEY,
+                id_produk VARCHAR(36) NOT NULL,
+                jenis_mutasi ENUM('Masuk', 'Keluar') NOT NULL,
+                jumlah_mutasi INT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (id_produk) REFERENCES tb_products(id_produk) ON DELETE CASCADE
+            )
+        `);
+        
+        const [rows] = await pool.query('SELECT * FROM tb_users WHERE email = ?', ['admin@smartinventory.com']);
+        if (rows.length === 0) {
+            const crypto = require('crypto');
+            const hashedPassword = await bcrypt.hash('admin123', 10);
+            await pool.query(
+                'INSERT INTO tb_users (id_user, full_name, email, password, role) VALUES (?, ?, ?, ?, ?)',
+                [crypto.randomUUID(), 'Administrator', 'admin@smartinventory.com', hashedPassword, 'Super Admin']
+            );
+        }
+        res.send('<h1>Database berhasil dibuat!</h1><p>Semua tabel sudah siap. Silakan tutup halaman ini dan coba Login kembali.</p>');
+    } catch (error) {
+        res.status(500).send('Error: ' + error.message);
+    }
+});
 
 // Expose uploads statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
