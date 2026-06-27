@@ -7,11 +7,10 @@ Ikuti panduan _Copy-Paste_ ini secara berurutan. Ini hanya akan memakan waktu se
 ---
 
 ## 1. Siapkan Akun (Lakukan Sekarang)
-Buka tab peramban (_browser_) baru dan segera daftar menggunakan **Akun GitHub** Anda di ketiga situs ini:
+Buka tab peramban (_browser_) baru dan segera daftar menggunakan **Akun GitHub** Anda di dua situs ini:
 1. **GitHub** (Pasti Anda sudah punya).
 2. **Aiven** ([aiven.io](https://aiven.io/)) $\rightarrow$ Untuk Database MySQL gratis.
-3. **Koyeb** ([koyeb.com](https://koyeb.com/)) $\rightarrow$ Untuk Backend Node.js (Tanpa Kartu Kredit).
-4. **Netlify** ([netlify.com](https://netlify.com/)) $\rightarrow$ Untuk Frontend React.
+3. **Netlify** ([netlify.com](https://netlify.com/)) $\rightarrow$ Untuk Backend Node.js & Frontend React.
 
 ---
 
@@ -22,7 +21,7 @@ Buka tab peramban (_browser_) baru dan segera daftar menggunakan **Akun GitHub**
    ```bash
    git init
    git add .
-   git commit -m "Siap Hosting"
+   git commit -m "Siap Hosting 100% Netlify"
    git branch -M main
    git remote add origin https://github.com/USERNAME-ANDA/novabox-inventaris.git
    git push -u origin main
@@ -40,37 +39,34 @@ Buka tab peramban (_browser_) baru dan segera daftar menggunakan **Akun GitHub**
 
 ---
 
-## 4. Hosting Backend (Koyeb)
-1. Buka *Dashboard* [Koyeb](https://app.koyeb.com/) dan login dengan GitHub.
-2. Klik tombol **Deploy** $\rightarrow$ Pilih **GitHub**.
-3. Pilih repository `novabox-inventaris` Anda.
-4. Pada bagian *Configure*:
-   * Pilih tipe **Web Service**.
-   * Di bagian **Builder**, pilih **Buildpack** (jangan Docker).
-   * **Work directory:** `backend` *(SANGAT PENTING! Jangan salah ketik)*.
-   * **Run command:** Kosongkan (Koyeb akan otomatis mendeteksi Node.js).
-5. Buka tab **Environment variables** dan tambahkan:
+## 4. Hosting Backend (Netlify)
+1. Buka *Dashboard* [Netlify](https://app.netlify.com/).
+2. Klik **Add new site** $\rightarrow$ **Import an existing project**.
+3. Hubungkan dengan GitHub dan pilih repository `novabox-inventaris`.
+4. Pada bagian *Site settings*, sesuaikan isian ini:
+   * **Base directory:** `backend` *(SANGAT PENTING!)*
+   * **Build command:** `npm install`
+   * **Publish directory:** *(kosongkan saja)*
+5. Buka tab **Environment variables** (Show advanced) dan tambahkan variabel ini:
    * **Key:** `DB_URL` | **Value:** *(Paste URL MySQL dari Aiven di Langkah 3).*
-   * *(Opsional: Jika menggunakan satuan variabel, Anda bisa memasukkan DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, JWT_SECRET seperti di file .env)*
-6. Di bagian *Instance*, pastikan Anda memilih tipe **Free / Eco**.
-7. Klik **Deploy**.
-8. Setelah selesai, Koyeb akan memberi Anda Link API publik. **Simpan (Copy) Link ini**.
+6. Klik **Deploy site**.
+7. Tunggu sampai statusnya _Published_. Setelah selesai, Netlify akan memberi Anda Link API publik (Misal: `https://acak-backend.netlify.app`). **Simpan (Copy) Link ini**.
 
 ---
 
 ## 5. Hosting Frontend (Netlify)
-1. Buka *Dashboard* [Netlify](https://app.netlify.com/).
-2. Klik **Add new site** $\rightarrow$ **Import an existing project**.
-3. Hubungkan dengan GitHub dan pilih repository `novabox-inventaris`.
-4. Pada bagian *Site settings*:
+1. Kembali ke beranda utama [Netlify](https://app.netlify.com/).
+2. Sekali lagi, klik **Add new site** $\rightarrow$ **Import an existing project**.
+3. Pilih repository `novabox-inventaris` yang sama persis seperti tadi.
+4. Pada bagian *Site settings*, kali ini sesuaikan isiannya menjadi:
    * **Base directory:** `frontend`
    * **Build command:** `npm run build`
    * **Publish directory:** `frontend/dist`
 5. Buka tab **Environment variables** (Show advanced) dan tambahkan:
    * **Key:** `VITE_API_URL`
-   * **Value:** *(Paste Link API Koyeb dari Langkah 4.8)* + `/api` (Contoh: `https://novabox-api.koyeb.app/api`).
+   * **Value:** *(Paste Link API Backend dari Langkah 4.7)* (Contoh: `https://acak-backend.netlify.app`).
 6. Klik **Deploy site**.
-7. Netlify akan membangun web Anda dan memberikan URL publik.
+7. Netlify akan membangun frontend Anda dan memberikan URL publik final.
 
 **SELESAI!**
-Kumpulkan Link Netlify tersebut ke Dosen Anda. Selamat atas bonus nilainya!
+Kumpulkan Link Netlify (Frontend) tersebut ke Dosen Anda. Selamat atas bonus nilainya!

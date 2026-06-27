@@ -21,7 +21,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_key_12345';
 // --- Multer Setup ---
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        // Netlify functions are read-only except for /tmp
+        cb(null, process.env.NETLIFY ? '/tmp' : 'uploads/');
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -515,6 +516,10 @@ app.delete('/api/users/me', authenticateToken, async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production' && !process.env.NETLIFY) {
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
+
+module.exports = app;
