@@ -337,7 +337,12 @@ const Dashboard = () => {
                                         <div className="flex items-start">
                                             <div className="flex-shrink-0 h-16 w-16 mt-1">
                                                 {product.foto_produk ? (
-                                                    <img className="h-16 w-16 rounded-xl object-cover border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]" src={`http://localhost:5000${product.foto_produk}`} alt="" />
+                                                    <img 
+                                                        className="h-16 w-16 rounded-xl object-cover border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)] bg-slate-100 flex items-center justify-center text-xs text-center" 
+                                                        src={product.foto_produk ? `${import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000'}${product.foto_produk}` : 'https://placehold.co/100x100/f8fafc/0f172a?text=Foto'} 
+                                                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/100x100/f8fafc/0f172a?text=Foto' }}
+                                                        alt={product.nama_produk} 
+                                                    />
                                                 ) : (
                                                     <div className="h-16 w-16 rounded-xl bg-slate-200 flex items-center justify-center text-slate-500 border-2 border-slate-900 shadow-[2px_2px_0px_0px_rgba(15,23,42,1)]">
                                                         <Package size={28} />
