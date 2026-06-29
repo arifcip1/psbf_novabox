@@ -16,6 +16,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --- DB INITIALIZATION ROUTE ---
+app.get('/api/ping', async (req, res) => {
+    try {
+        await pool.query('SELECT 1');
+        res.status(200).send('PONG');
+    } catch (e) {
+        res.status(500).send('ERROR');
+    }
+});
 app.get('/api/init-db', async (req, res) => {
     try {
         await pool.query(`
